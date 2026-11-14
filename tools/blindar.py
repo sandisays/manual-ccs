@@ -10,6 +10,8 @@ O que faz (pode rodar várias vezes; só altera o que ainda falta):
   2. Adiciona a política de segurança (CSP): a página só conversa com o próprio endereço.
   3. Move o logo e a linha de descrição do cabeçalho para dentro do conteúdo criptografado,
      para que nada da empresa apareça para quem não tem a senha.
+  4. Põe o botão Sair no cabeçalho: apaga a chave guardada na aba e volta para a tela de senha
+     (útil em computador compartilhado).
 Depois rode  python3 tools/verificar.py  para conferir.
 """
 import base64, getpass, gzip, hashlib, json, os, re, sys
@@ -23,6 +25,15 @@ CSP = ("default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe
        "frame-src 'self' data: blob:; form-action 'none'; base-uri 'none'")
 META = '<meta http-equiv="Content-Security-Policy" content="%s">' % CSP
 MARCA = '/*cabecalho-protegido*/'
+ICONE_SAIR = ('<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M5 22a1 1 0 0 1-1-1V3'
+              'a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v3h-2V4H6v16h12v-2h2v3a1 1 0 0 1-1 1H5zm13-6v-3h-7v-2h7V8l5 4-5 4z"/></svg>')
+SAIR = ('<button class="tg ic" id="sair" type="button" aria-label="Sair" title="Sair">%s</button>' % ICONE_SAIR)
+# no computador o Voltar vai para a esquerda do Sair; no celular não há espaço, então o Sair
+# ocupa o lugar do Voltar e some enquanto o Voltar estiver visível
+SAIR_CSS = ('<style id="sair-css">#sair{right:108px}header #bk.tg{right:154px}'
+            '@media (max-width:600px){#sair{right:96px}header #bk.tg{right:96px}#bk:not([hidden])~#sair{display:none}}</style>')
+SAIR_JS = ('<script id="sair-js">document.getElementById("sair").onclick=function(){'
+           'try{sessionStorage.removeItem("ccs-k")}catch(e){}location.reload()};</script>')
 b64d, b64e = base64.b64decode, lambda x: base64.b64encode(x).decode()
 
 
@@ -89,6 +100,17 @@ def blindar(caminho, senha):
         iv = os.urandom(12)
         P['iv'], P['c'] = b64e(iv), b64e(AESGCM(chave).encrypt(iv, dados, None))
         feito.append('cabeçalho protegido')
+
+    # 4. botão Sair
+    css_atual = re.search(r'<style id="sair-css">.*?</style>', antes, re.S)
+    if css_atual and css_atual.group(0) != SAIR_CSS:
+        antes = antes.replace(css_atual.group(0), SAIR_CSS)
+        feito.append('estilo do botão Sair atualizado')
+    if 'id="sair"' not in antes and 'id="tg"' in antes:
+        antes = re.sub(r'(<button class="tg ic" id="tg"[^>]*>.*?</button>)', lambda x: x.group(1) + SAIR, antes, count=1, flags=re.S)
+        antes = antes.replace('</head>', SAIR_CSS + '</head>', 1)
+        depois = depois.replace('</body>', SAIR_JS + '</body>', 1)
+        feito.append('botão Sair')
 
     saida = antes + m.group(1) + json.dumps(P, separators=(',', ':')) + m.group(3) + depois
     if saida != html:
