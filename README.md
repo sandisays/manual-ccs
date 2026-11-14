@@ -30,3 +30,7 @@ Regras que a verificação garante:
 - A senha precisa ter pelo menos 12 caracteres; prefira uma frase de 4 ou 5 palavras.
 - `trocar_senha.py` troca só a senha. Se alguém saiu da equipe ou houve suspeita de vazamento, use `rotacionar_chave.py`.
 - A senha nunca é escrita em arquivo deste repositório.
+
+## Antes de cada publicação
+
+Rode `python3 tools/blindar.py` e depois `python3 tools/verificar.py --senha`. Só publique se o verificar terminar com "OK: pode publicar.".
