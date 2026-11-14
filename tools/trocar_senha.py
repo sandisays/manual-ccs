@@ -5,6 +5,9 @@ Uso:  python3 tools/trocar_senha.py        (pede a senha atual e a nova)
 Precisa de: pip install cryptography
 O conteúdo é cifrado com uma chave fixa; a senha só protege essa chave.
 Trocar a senha gera um novo sal, então todos precisam entrar de novo.
+
+Quem já conhecia a senha antiga pode ter guardado a chave. Se alguém saiu da equipe ou a
+senha vazou, use tools/rotacionar_chave.py, que troca a chave e recriptografa tudo.
 """
 import base64, getpass, hashlib, json, os, re, sys
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -23,8 +26,8 @@ try:
 except Exception:
     sys.exit("Senha atual incorreta. Nada foi alterado.")
 nova = norm(getpass.getpass("Senha nova: "))
-if len(nova) < 8 or nova != norm(getpass.getpass("Repita a senha nova: ")):
-    sys.exit("Senha nova curta (mínimo 8) ou diferente na repetição. Nada foi alterado.")
+if len(nova) < 12 or nova != norm(getpass.getpass("Repita a senha nova: ")):
+    sys.exit("Senha nova curta (mínimo 12; prefira uma frase de 4 ou 5 palavras) ou diferente na repetição. Nada foi alterado.")
 sal, iv = os.urandom(16), os.urandom(12)
 P["s"] = base64.b64encode(sal).decode()
 P["wi"] = base64.b64encode(iv).decode()
