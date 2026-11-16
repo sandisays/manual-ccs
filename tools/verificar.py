@@ -11,6 +11,7 @@ Confere, em index.html e manual-generico/index.html:
   4. Cabeçalho sem logo nem descrição fora da parte criptografada.
   5. Todos os arquivos de enc/ no formato criptografado.
   6. Com --senha: todos os arquivos abrem com a chave atual.
+  7. Se houver a pasta ferramentas/, a cópia das Ferramentas PDF confere com o SHA-256 do VERSAO.txt.
 """
 import base64, getpass, glob, hashlib, json, os, re, sys
 
@@ -80,6 +81,12 @@ def conferir(pasta, senha):
                 chave.decrypt(bruto[:12], bruto[12:], None)
         except Exception:
             erro(pasta, 'enc/%s %s' % (nome, 'não abre com a chave atual' if chave else 'não está no formato criptografado'))
+    fp = os.path.join(pasta, 'ferramentas', 'index.html')
+    if os.path.exists(fp):
+        vt = os.path.join(pasta, 'ferramentas', 'VERSAO.txt')
+        reg = open(vt, encoding='utf-8').read() if os.path.exists(vt) else ''
+        if hashlib.sha256(open(fp, 'rb').read()).hexdigest() not in reg:
+            erro(pasta, 'ferramentas/index.html não confere com o VERSAO.txt (rode tools/atualizar_ferramentas_pdf.py)')
     print('%s: %d arquivos em enc/ conferidos%s' % (os.path.relpath(pasta, RAIZ) or '.', len(itens), ' e abertos com a senha' if chave else ''))
 
 

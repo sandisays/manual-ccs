@@ -1,0 +1,2 @@
+Ferramentas PDF 1.6.1
+SHA-256 aa73e5281978b81afbc794473efdf354573fdfe18b110e14891c7aeda9ebd826

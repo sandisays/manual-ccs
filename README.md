@@ -8,6 +8,7 @@ Manual de certificação (SIGSIF, DCPOA, modelos de CSI, unidades e normas).
 
 - `tools/blindar.py`: aplica as proteções de publicação ao `index.html` (fonte embutida, política de segurança, cabeçalho dentro da parte criptografada e botão Sair). Rode sempre que o `index.html` for gerado de novo.
 - `tools/verificar.py`: confere se está tudo pronto para publicar. Com `--senha`, também abre todos os arquivos.
+- `tools/atualizar_ferramentas_pdf.py`: copia uma versão nova das Ferramentas PDF para `ferramentas/` (e para o manual genérico), conferindo o SHA-256. Depois rode `tools/blindar.py`, que põe o cartão "Ferramentas PDF" na aba Ferramentas.
 - `tools/rotacionar_chave.py`: gera chave nova e recriptografa tudo. Use quando alguém que conhecia a senha sair da equipe.
 
 Nenhum arquivo deste repositório tem conteúdo do manual em texto aberto. Para abrir, baixe a pasta inteira e abra o `index.html` num servidor web (ou publique no Cloudflare Pages / GitHub Pages).

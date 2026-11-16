@@ -12,6 +12,9 @@ O que faz (pode rodar várias vezes; só altera o que ainda falta):
      para que nada da empresa apareça para quem não tem a senha.
   4. Põe o botão Sair no cabeçalho: apaga a chave guardada na aba e volta para a tela de senha
      (útil em computador compartilhado).
+  5. Se existir a pasta ferramentas/ (cópia das Ferramentas PDF, posta por
+     tools/atualizar_ferramentas_pdf.py), garante o cartão "Ferramentas PDF" na aba Ferramentas,
+     que abre a ferramenta dentro do manual.
 Depois rode  python3 tools/verificar.py  para conferir.
 """
 import base64, getpass, gzip, hashlib, json, os, re, sys
@@ -32,6 +35,15 @@ SAIR = ('<button class="tg ic" id="sair" type="button" aria-label="Sair" title="
 # ocupa o lugar do Voltar e some enquanto o Voltar estiver visível
 SAIR_CSS = ('<style id="sair-css">#sair{right:108px}header #bk.tg{right:154px}'
             '@media (max-width:600px){#sair{right:96px}header #bk.tg{right:96px}#bk:not([hidden])~#sair{display:none}}</style>')
+PDF_MARCA = '/*ferramentas-pdf*/'
+PDF_ITEM = "['pdf','Ferramentas PDF','Converter, comprimir, juntar, tarjar e mais, sem sair do manual',fPdf],"
+PDF_FUNC = (PDF_MARCA + "function fPdf(w){const src='ferramentas/index.html';"
+            "const p=E('p','sub','Converter para Word e Excel, OCR, comprimir, juntar, dividir, tarjar e mais. "
+            "Os arquivos são processados só neste computador e não são enviados para lugar nenhum.');"
+            "const a=E('a',null,'Abrir em tela cheia');a.href=src;a.target='_blank';a.rel='noopener';p.append(' ',a);"
+            "const f=document.createElement('iframe');f.src=src;f.title='Ferramentas PDF';"
+            "f.style.cssText='width:100%;height:calc(100vh - 140px);min-height:620px;border:1px solid var(--line);"
+            "border-radius:10px;background:#fff';w.append(p,f)}\n")
 SAIR_JS = ('<script id="sair-js">document.getElementById("sair").onclick=function(){'
            'try{sessionStorage.removeItem("ccs-k")}catch(e){}location.reload()};</script>')
 b64d, b64e = base64.b64decode, lambda x: base64.b64encode(x).decode()
@@ -100,6 +112,25 @@ def blindar(caminho, senha):
         iv = os.urandom(12)
         P['iv'], P['c'] = b64e(iv), b64e(AESGCM(chave).encrypt(iv, dados, None))
         feito.append('cabeçalho protegido')
+
+    # 5. cartão Ferramentas PDF (só se a cópia da ferramenta estiver na pasta)
+    if os.path.exists(os.path.join(os.path.dirname(caminho), 'ferramentas', 'index.html')):
+        claro = AESGCM(chave).decrypt(b64d(P['iv']), b64d(P['c']), None)
+        texto = gzip.decompress(claro).decode() if P.get('z') else claro.decode()
+        if PDF_MARCA not in texto and 'function ferramentas(){[' in texto:
+            texto = texto.replace('function ferramentas(){[', PDF_FUNC + 'function ferramentas(){[' + PDF_ITEM, 1)
+            texto = texto.replace("'Conversor de protocolo e agrupador de laudos',{tab:'ferr'}",
+                                  "'Ferramentas PDF, conversor de protocolo e agrupador de laudos',{tab:'ferr'}", 1)
+            texto = texto.replace("g:{tab:'ferr',fs:'agrup'}});",
+                                  "g:{tab:'ferr',fs:'agrup'}});IDX.push({k:'Ferramenta · Ferramentas PDF',s:'Ferramenta',"
+                                  "t:'Converter PDF em Word e Excel, OCR, comprimir, juntar, dividir, tarjar e proteger com senha.',"
+                                  "h:'pdf word excel converter comprimir juntar dividir tarjar ocr senha',g:{tab:'ferr',fs:'pdf'}});", 1)
+            dados = texto.encode()
+            if P.get('z'):
+                dados = gzip.compress(dados, 9, mtime=0)
+            iv = os.urandom(12)
+            P['iv'], P['c'] = b64e(iv), b64e(AESGCM(chave).encrypt(iv, dados, None))
+            feito.append('cartão Ferramentas PDF')
 
     # 4. botão Sair
     css_atual = re.search(r'<style id="sair-css">.*?</style>', antes, re.S)
