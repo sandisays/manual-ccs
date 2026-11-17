@@ -113,6 +113,16 @@
   .dimg { display:grid; grid-template-columns:1fr 1fr; gap:10px; } .dimg figure { margin:0; } .dimg figcaption { font-size:11.5px; color:var(--mute); margin-bottom:3px; } .dcv { width:100%; height:auto; border:1px solid var(--line); border-radius:6px; background:#fff; }
   @media (max-width:700px) { .dimg { grid-template-columns:1fr; } }
   details.cmpfull { margin-top:14px; } details.cmpfull summary { font-weight:600; }
+  .dimg { cursor:zoom-in; position:relative; } .dimg::after { content:"⌕ ampliar"; position:absolute; right:6px; bottom:6px; font-size:11.5px; font-weight:600; background:rgba(0,0,0,.6); color:#fff; padding:2px 8px; border-radius:8px; opacity:0; transition:opacity .15s; pointer-events:none; } .dimg:hover::after { opacity:1; }
+  canvas.zoomable { cursor:zoom-in; }
+  .zoomv { position:fixed; inset:0; z-index:1000; background:rgba(28,22,20,.97); display:flex; flex-direction:column; } .zoomv[hidden] { display:none; }
+  .zbar { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--card); color:var(--ink); flex-wrap:wrap; } .zbar b { flex:1; min-width:160px; }
+  .zbt { display:flex; align-items:center; gap:6px; flex-wrap:wrap; } .zbt .btn { padding:6px 12px; min-width:38px; } .zp { min-width:52px; text-align:center; font-weight:600; font-size:13px; } .zsep { width:10px; }
+  .zstage { flex:1; overflow:auto; cursor:grab; touch-action:pan-x pan-y pinch-zoom; } .zstage.grab { cursor:grabbing; }
+  .zcontent { display:flex; flex-direction:column; align-items:flex-start; gap:18px; padding:20px; width:max-content; min-width:100%; box-sizing:border-box; } .zcontent.side { flex-direction:row; align-items:flex-start; }
+  .zcontent figure { margin:0 auto; } .zcontent figcaption { color:#fff; font-size:13px; font-weight:600; margin-bottom:6px; } .zcontent img { display:block; background:#fff; box-shadow:0 4px 20px rgba(0,0,0,.5); user-select:none; max-width:none; }
+  .zhint { color:rgba(255,255,255,.75); font-size:12px; text-align:center; padding:6px; }
+  body.noscroll { overflow:hidden; }
   .credit .sep { color:var(--mute); margin:0 6px; font-weight:400; }
   #privLink { background:none; border:0; padding:0; font:inherit; font-weight:600; color:var(--acc); cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
   #cmpDlg { width:calc(100% - 24px); max-width:1500px; height:calc(100% - 24px); max-height:none; border:1px solid var(--line); border-radius:16px; background:var(--card); color:var(--ink); padding:0; box-shadow:var(--shadow); }
@@ -599,8 +609,16 @@
   </details>
   <footer>
     Arquivo único: guarde este .html no computador ou pen drive e abra com dois cliques (Chrome, Edge ou Firefox).
-    <div class="credit">Desenvolvido por <span>Sandi :)</span><span class="sep">·</span><span id="appVersion">versão 1.7.0</span><span class="sep">·</span><button type="button" id="privLink">Política de privacidade</button></div>
+    <div class="credit">Desenvolvido por <span>Sandi :)</span><span class="sep">·</span><span id="appVersion">versão 1.7.1</span><span class="sep">·</span><button type="button" id="privLink">Política de privacidade</button></div>
   </footer>
+  <div id="zoomv" class="zoomv" hidden role="dialog" aria-modal="true" aria-labelledby="zoomt">
+    <div class="zbar"><b id="zoomt">Ampliar</b>
+      <div class="zbt"><button class="btn ghost" id="zoomprev" title="Anterior (seta para a esquerda)">‹</button><button class="btn ghost" id="zoomnext" title="Próxima (seta para a direita)">›</button>
+        <span class="zsep"></span><button class="btn ghost" id="zoomout" title="Diminuir (-)">−</button><span id="zoomp" class="zp">100%</span><button class="btn ghost" id="zoomin" title="Aumentar (+)">+</button><button class="btn ghost" id="zoomfit" title="Caber na tela (0)">Ajustar</button>
+        <button class="btn" id="zoomclose" title="Fechar (Esc)">Fechar</button></div></div>
+    <div class="zstage" id="zooms"><div class="zcontent" id="zoomc"></div></div>
+    <div class="zhint">Arraste para mover · Ctrl + roda do mouse (ou pinça) para zoom · duplo clique para aproximar</div>
+  </div>
   <dialog id="cmpDlg" aria-labelledby="cmpTitle">
     <div class="cmphd"><h2 id="cmpTitle">Comparar</h2><span class="lg" id="cmpInfo">PDF original à esquerda, Word convertido à direita. As duas colunas rolam juntas.</span><button type="button" class="btn ghost" id="cmpClose">Fechar</button></div>
     <div class="cmpgrid"><div class="cmpcol" id="cmpPdf"><div class="cmpcap">PDF original</div></div><div class="cmpcol" id="cmpDoc"><div class="cmpcap">Word convertido (prévia aproximada: confira o final no Word)</div><div id="cmpDocBody"></div></div></div>
@@ -15889,7 +15907,8 @@ if (typeof module !== 'undefined') module.exports = createPdf2Docx;
         card.appendChild(tx);
         var sa = await strip(da, 'a', g.a, wa[g.ancA] || wa[g.ancA + 1], ['rgba(220,30,30,.28)', '#c81e1e'], sc), sb = await strip(db, 'b', g.b, wb[g.ancB] || wb[g.ancB + 1], ['rgba(20,160,60,.28)', '#138a3a'], sc);
         var im = el('div', 'dimg'); [[sa, 'Primeiro'], [sb, 'Segundo']].forEach(function (q) { if (!q[0]) return; var f = el('figure'), cap = el('figcaption'); cap.textContent = q[1] + ' · pág. ' + q[0].p; f.appendChild(cap); q[0].c.className = 'dcv'; f.appendChild(q[0].c); im.appendChild(f); });
-        card.appendChild(im); list.appendChild(card); cards.push({ g: g, kind: kind, sa: sa, sb: sb }); }
+        card.appendChild(im); list.appendChild(card); cards.push({ g: g, kind: kind, sa: sa, sb: sb });
+        im.title = 'Clique para ampliar'; im.onclick = (function (k) { return function () { zoomCard(k); }; })(cards.length - 1); }
       if (gs.length > 200) { var more = el('p', 'note'); more.textContent = 'Mostrando as primeiras 200 diferenças.'; list.appendChild(more); }
       view.appendChild(list);
       // páginas inteiras, recolhidas
@@ -15898,13 +15917,45 @@ if (typeof module !== 'undefined') module.exports = createPdf2Docx;
         for (var p = 1; p <= np; p++) { var row = el('div', 'cmprow'); for (var side = 0; side < 2; side++) { var d = side ? db2 : da2, cell = el('div', 'cmpcell'), cap = el('div', 'cmpc'); cap.textContent = (side ? 'Segundo' : 'Primeiro') + ' · página ' + p; cell.appendChild(cap);
             if (p <= d.numPages) { var pg2 = await d.getPage(p), v = pg2.getViewport({ scale: 1 }), s2 = width / v.width, cv = await S.renderCanvas(pg2, s2 * dpr), x = cv.getContext('2d');
               x.save(); x.scale(s2 * dpr, s2 * dpr); x.fillStyle = side ? 'rgba(20,160,60,.32)' : 'rgba(220,30,30,.32)';
-              gs.forEach(function (g) { (side ? g.b : g.a).forEach(function (w) { if (w.p === p) x.fillRect(w.x - 1, w.y, w.w + 2, w.h); }); }); x.restore(); cv.style.width = width + 'px'; cell.appendChild(cv); pg2.cleanup(); }
+              gs.forEach(function (g) { (side ? g.b : g.a).forEach(function (w) { if (w.p === p) x.fillRect(w.x - 1, w.y, w.w + 2, w.h); }); }); x.restore(); cv.style.width = width + 'px'; cv.className = 'zoomable'; cv.title = 'Clique para ampliar';
+              cv.onclick = (function (pp) { return function () { zoomPages(pp); }; })(p); cell.appendChild(cv); pg2.cleanup(); }
             else { var e2 = el('div', 'cmpnone'); e2.textContent = 'Sem esta página'; cell.appendChild(e2); } row.appendChild(cell); } det.appendChild(row); } });
       var da2 = da, db2 = db; da = db = null; // ficam abertos para "páginas inteiras" e relatório
       if (K.last) try { K.last.da.destroy(); K.last.db.destroy(); } catch (e) {}
       K.last = { da: da2, db: db2, cards: cards, na: K.a.name, nb: K.b.name, total: gs.length }; $('rep_cmp').hidden = false;
     } catch (e) { msg(res, H.errMsg(e), 'err'); }
     try { da && da.destroy(); db && db.destroy(); } catch (e) {} btn.disabled = false; };
+  /* ---- lupa: amplia recortes e páginas (zoom com botões, Ctrl + roda do mouse ou pinça; arrastar para mover) ---- */
+  var Z = { scale: 1, fit: 1, items: [], idx: -1, mode: '' };
+  function zoomOpen(title, canvases) { var v = $('zoomv'), box = $('zoomc'); $('zoomt').textContent = title; box.innerHTML = '';
+    Z.items = canvases.map(function (q) { var f = el('figure'), cap = el('figcaption'), im = new Image(); cap.textContent = q.label; im.src = q.c.toDataURL('image/png'); im.alt = q.label; im.draggable = false;
+      f.appendChild(cap); f.appendChild(im); box.appendChild(f); return { im: im, w: q.c.width, h: q.c.height, css: q.css || 1 }; });
+    v.hidden = false; document.body.classList.add('noscroll'); requestAnimationFrame(function () { zoomFit(); }); $('zoomclose').focus(); }
+  function zoomApply() { Z.items.forEach(function (it) { it.im.style.width = Math.round(it.w / it.css * Z.scale) + 'px'; }); $('zoomp').textContent = Math.round(Z.scale * 100) + '%'; }
+  function zoomFit() { var st = $('zooms'), maxW = 0; Z.items.forEach(function (it) { maxW = Math.max(maxW, it.w / it.css); }); var side = Z.mode === 'pages' && Z.items.length > 1 && st.clientWidth > 700;
+    Z.fit = Math.max(0.1, Math.min(4, (side ? (st.clientWidth - 60) / 2 : st.clientWidth - 40) / (maxW || 1))); $('zoomc').classList.toggle('side', side); Z.scale = Z.fit; zoomApply(); st.scrollTop = 0; st.scrollLeft = 0; }
+  function zoomBy(f, cx, cy) { var st = $('zooms'), r = st.getBoundingClientRect(), px = (cx == null ? r.width / 2 : cx - r.left), py = (cy == null ? r.height / 2 : cy - r.top);
+    var ox = (st.scrollLeft + px) / Z.scale, oy = (st.scrollTop + py) / Z.scale; Z.scale = Math.max(0.1, Math.min(8, Z.scale * f)); zoomApply(); st.scrollLeft = ox * Z.scale - px; st.scrollTop = oy * Z.scale - py; }
+  function zoomClose() { $('zoomv').hidden = true; $('zoomc').innerHTML = ''; Z.items = []; document.body.classList.remove('noscroll'); }
+  function zoomCard(k) { var L = K.last, cd = L && L.cards[k]; if (!cd) return; Z.mode = 'card'; Z.idx = k; var list2 = [];
+    if (cd.sa) list2.push({ c: cd.sa.c, label: 'Primeiro · pág. ' + cd.sa.p, css: 2.5 }); if (cd.sb) list2.push({ c: cd.sb.c, label: 'Segundo · pág. ' + cd.sb.p, css: 2.5 });
+    zoomOpen('Diferença ' + (k + 1) + ' de ' + L.cards.length + ' · ' + cd.kind, list2); $('zoomprev').hidden = $('zoomnext').hidden = false; $('zoomprev').disabled = k === 0; $('zoomnext').disabled = k >= L.cards.length - 1; }
+  async function zoomPages(p) { var L = K.last; if (!L) return; Z.mode = 'pages'; Z.idx = p; var list2 = [], sc = 3;
+    for (var side = 0; side < 2; side++) { var d = side ? L.db : L.da; if (p > d.numPages) continue; var pg = await d.getPage(p), c = await S.renderCanvas(pg, sc), x = c.getContext('2d');
+      x.save(); x.scale(sc, sc); x.fillStyle = side ? 'rgba(20,160,60,.3)' : 'rgba(220,30,30,.3)'; L.cards.forEach(function (cd) { (side ? cd.g.b : cd.g.a).forEach(function (w) { if (w.p === p) x.fillRect(w.x - 1, w.y, w.w + 2, w.h); }); }); x.restore(); pg.cleanup();
+      list2.push({ c: c, label: (side ? 'Segundo' : 'Primeiro') + ' · página ' + p, css: sc * 96 / 72 }); }
+    var np = Math.max(L.da.numPages, L.db.numPages); zoomOpen('Páginas ' + p + ' de ' + np, list2); $('zoomprev').hidden = $('zoomnext').hidden = false; $('zoomprev').disabled = p <= 1; $('zoomnext').disabled = p >= np; }
+  (function () { var st = $('zooms'), drag = null;
+    $('zoomclose').onclick = zoomClose; $('zoomin').onclick = function () { zoomBy(1.25); }; $('zoomout').onclick = function () { zoomBy(0.8); }; $('zoomfit').onclick = zoomFit;
+    $('zoomprev').onclick = function () { if (Z.mode === 'card') zoomCard(Z.idx - 1); else zoomPages(Z.idx - 1); };
+    $('zoomnext').onclick = function () { if (Z.mode === 'card') zoomCard(Z.idx + 1); else zoomPages(Z.idx + 1); };
+    st.addEventListener('wheel', function (e) { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.12 : 0.89, e.clientX, e.clientY); }, { passive: false });
+    st.addEventListener('dblclick', function (e) { if (Math.abs(Z.scale - Z.fit) < 0.01) zoomBy(2, e.clientX, e.clientY); else zoomFit(); });
+    st.addEventListener('pointerdown', function (e) { if (e.button) return; drag = { x: e.clientX, y: e.clientY, l: st.scrollLeft, t: st.scrollTop }; st.classList.add('grab'); });
+    window.addEventListener('pointermove', function (e) { if (!drag) return; st.scrollLeft = drag.l - (e.clientX - drag.x); st.scrollTop = drag.t - (e.clientY - drag.y); });
+    window.addEventListener('pointerup', function () { drag = null; st.classList.remove('grab'); });
+    document.addEventListener('keydown', function (e) { if ($('zoomv').hidden) return; if (e.key === 'Escape') zoomClose(); else if (e.key === '+' || e.key === '=') zoomBy(1.25); else if (e.key === '-') zoomBy(0.8);
+      else if (e.key === 'ArrowRight' && !$('zoomnext').disabled) $('zoomnext').click(); else if (e.key === 'ArrowLeft' && !$('zoomprev').disabled) $('zoomprev').click(); else if (e.key === '0') zoomFit(); }); })();
   // relatório em PDF: uma linha por diferença, com os dois recortes
   $('rep_cmp').onclick = async function () { var L = K.last; if (!L) return; var btn = this; btn.disabled = true;
     try { var doc = await P.PDFDocument.create(), font = await doc.embedFont(P.StandardFonts.Helvetica), bold = await doc.embedFont(P.StandardFonts.HelveticaBold), W = 595.28, Hh = 841.89, M = 36, page = null, y = 0;
