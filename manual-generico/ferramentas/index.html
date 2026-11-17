@@ -63,7 +63,8 @@
   .bar { grid-column: 1 / -1; height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-top:4px; }
   .bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,#f59a6b,var(--fill)); border-radius:4px; transition: width .2s; }
   .limits { margin-top:16px; background:var(--prbg); border:1px solid var(--line); border-left:5px solid var(--pr); border-radius:14px; padding:14px 18px; font-size:14px; color:var(--ink); }
-  .limits b.t { display:flex; align-items:center; gap:8px; color:var(--pr); font-family:'Fredoka','Nunito','Trebuchet MS',system-ui,sans-serif; font-weight:600; font-size:16px; margin-bottom:6px; }
+  details.limits { box-shadow:none; } details.limits[open] summary.t { margin-bottom:8px; } .limits summary.t { justify-content:flex-start !important; text-align:left; } .limits summary.t::after { margin-left:auto; }
+  .limits summary.t { display:flex; cursor:pointer; list-style:none; align-items:center; gap:8px; color:var(--pr); font-family:'Fredoka','Nunito','Trebuchet MS',system-ui,sans-serif; font-weight:600; font-size:16px; margin-bottom:6px; }
   .limits ul { margin:0; padding-left:20px; } .limits li { margin-bottom:4px; }
   details { margin-top:16px; background:var(--card); border-radius:16px; padding:14px 18px; box-shadow: var(--shadow); }
   summary { cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center; }
@@ -104,6 +105,14 @@
   .pwrow { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-top:12px; } .pwrow label { display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--mute); font-weight:600; }
   .infobox { grid-column:1 / -1; } .infotab { border-collapse:collapse; font-size:13.5px; margin-top:4px; width:100%; } .infotab th { text-align:left; color:var(--mute); font-weight:600; padding:3px 14px 3px 0; white-space:nowrap; vertical-align:top; width:1%; } .infotab td { padding:3px 0; word-break:break-word; }
   .scanprev { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; } .scanprev figure { margin:0; display:flex; flex-direction:column; align-items:center; gap:6px; } .scanprev figcaption { font-size:12.5px; color:var(--mute); font-weight:600; } .scanprev canvas { max-width:100%; height:auto; box-shadow:0 1px 6px rgba(0,0,0,.25); }
+  .dcards { display:flex; flex-direction:column; gap:12px; }
+  .dcard { border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:var(--card); }
+  .dhd { display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px; } .dn { min-width:22px; height:22px; border-radius:11px; background:var(--soft); display:grid; place-items:center; font-weight:700; font-size:12px; }
+  .dk { font-weight:700; padding:1px 8px; border-radius:8px; font-size:12px; } .dk-A { background:#fde8c8; color:#8a4b00; } .dk-R { background:rgba(220,30,30,.15); color:#a51616; } .dk-I { background:rgba(20,160,60,.15); color:#0f6e2e; } .dpg { color:var(--mute); }
+  .dtx { font-size:14px; margin-bottom:8px; word-break:break-word; } .dln + .dln { margin-top:2px; } .dtx del { background:rgba(220,30,30,.15); color:#a51616; } .dtx ins { background:rgba(20,160,60,.15); color:#0f6e2e; text-decoration:none; }
+  .dimg { display:grid; grid-template-columns:1fr 1fr; gap:10px; } .dimg figure { margin:0; } .dimg figcaption { font-size:11.5px; color:var(--mute); margin-bottom:3px; } .dcv { width:100%; height:auto; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  @media (max-width:700px) { .dimg { grid-template-columns:1fr; } }
+  details.cmpfull { margin-top:14px; } details.cmpfull summary { font-weight:600; }
   .credit .sep { color:var(--mute); margin:0 6px; font-weight:400; }
   #privLink { background:none; border:0; padding:0; font:inherit; font-weight:600; color:var(--acc); cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
   #cmpDlg { width:calc(100% - 24px); max-width:1500px; height:calc(100% - 24px); max-height:none; border:1px solid var(--line); border-radius:16px; background:var(--card); color:var(--ink); padding:0; box-shadow:var(--shadow); }
@@ -401,19 +410,6 @@
     <ul id="list_qr" class="flist"></ul>
   </section>
 
-  <div class="limits" id="limits">
-    <b class="t"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Antes de usar, saiba que</b>
-    <ul>
-      <li><b>Quantidade:</b> não há limite fixo de arquivos. Eles entram numa fila e são convertidos um de cada vez.</li>
-      <li><b>OCR:</b> leva alguns segundos por página (mais em computador lento ou acesso remoto) e pode errar letras; sempre confira o texto reconhecido.</li>
-      <li><b>Tamanho:</b> o limite é a memória do seu computador. PDFs muito grandes (acima de uns 100 MB ou centenas de páginas) podem demorar ou travar a aba; nesse caso, divida o PDF.</li>
-      <li><b>Baixar todos:</b> o navegador baixa um arquivo por vez e pode pedir permissão para downloads múltiplos na primeira vez.</li>
-      <li><b>Nada fica salvo:</b> ao fechar ou recarregar a aba, os convertidos somem. Baixe antes de sair.</li>
-      <li><b>Sempre confira</b> o resultado (o .docx no Word, o PDF juntado ou comprimido no leitor de PDF) antes de usar em documento oficial.</li>
-      <li><b>PDF com senha</b> ou protegido não é aceito. Dica: abra o PDF no navegador ou no leitor de PDF, aperte <b>Ctrl+P</b> e escolha <b>Salvar como PDF</b> (ou a impressora <b>Print to PDF</b>). Isso gera um PDF novo, sem senha.</li>
-      <li><b>Tarja:</b> só a página marcada vira imagem (o texto escondido some de verdade); confira o resultado antes de enviar.</li>
-    </ul>
-  </div>
 
   <section class="panel" data-panel="xls" hidden>
     <div id="drop_xls" class="drop" tabindex="0" role="button" aria-label="Escolher arquivo">
@@ -467,8 +463,8 @@
       <input id="file_cmp_b" type="file" accept="application/pdf,.pdf" hidden>
     </div>
     </div>
-    <p class="note">Compara o texto palavra por palavra: mostra o que saiu (vermelho) e o que entrou (verde), mesmo se o texto mudou de página. PDF escaneado precisa passar pelo OCR antes.</p>
-    <div class="row"><span></span><button class="btn" id="go_cmp" disabled>Comparar</button></div>
+    <p class="note">Lista cada diferença com o trecho das duas versões lado a lado: em vermelho o que saiu, em verde o que entrou. Trechos que só mudaram de lugar são ignorados. PDF escaneado precisa passar pelo OCR antes.</p>
+    <div class="row"><span></span><div><button class="btn ghost" id="rep_cmp" hidden>Baixar relatório PDF</button><button class="btn" id="go_cmp" disabled>Comparar</button></div></div>
     <div id="res_cmp" class="res"></div>
     <div id="view_cmp" class="cmpview"></div>
   </section>
@@ -577,6 +573,20 @@
     <div id="res_book" class="res"></div>
   </section>
 
+  <details class="limits" id="limits">
+    <summary class="t"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Antes de usar, saiba que</summary>
+    <ul>
+      <li><b>Quantidade:</b> não há limite fixo de arquivos. Eles entram numa fila e são convertidos um de cada vez.</li>
+      <li><b>OCR:</b> leva alguns segundos por página (mais em computador lento ou acesso remoto) e pode errar letras; sempre confira o texto reconhecido.</li>
+      <li><b>Tamanho:</b> o limite é a memória do seu computador. PDFs muito grandes (acima de uns 100 MB ou centenas de páginas) podem demorar ou travar a aba; nesse caso, divida o PDF.</li>
+      <li><b>Baixar todos:</b> o navegador baixa um arquivo por vez e pode pedir permissão para downloads múltiplos na primeira vez.</li>
+      <li><b>Nada fica salvo:</b> ao fechar ou recarregar a aba, os convertidos somem. Baixe antes de sair.</li>
+      <li><b>Sempre confira</b> o resultado (o .docx no Word, o PDF juntado ou comprimido no leitor de PDF) antes de usar em documento oficial.</li>
+      <li><b>PDF com senha</b> ou protegido não é aceito. Dica: abra o PDF no navegador ou no leitor de PDF, aperte <b>Ctrl+P</b> e escolha <b>Salvar como PDF</b> (ou a impressora <b>Print to PDF</b>). Isso gera um PDF novo, sem senha.</li>
+      <li><b>Tarja:</b> só a página marcada vira imagem (o texto escondido some de verdade); confira o resultado antes de enviar.</li>
+    </ul>
+  </details>
+
   <details data-only="conv">
     <summary>O que este conversor faz e o que não faz</summary>
     <ul>
@@ -589,7 +599,7 @@
   </details>
   <footer>
     Arquivo único: guarde este .html no computador ou pen drive e abra com dois cliques (Chrome, Edge ou Firefox).
-    <div class="credit">Desenvolvido por <span>Sandi :)</span><span class="sep">·</span><span id="appVersion">versão 1.6.1</span><span class="sep">·</span><button type="button" id="privLink">Política de privacidade</button></div>
+    <div class="credit">Desenvolvido por <span>Sandi :)</span><span class="sep">·</span><span id="appVersion">versão 1.7.0</span><span class="sep">·</span><button type="button" id="privLink">Política de privacidade</button></div>
   </footer>
   <dialog id="cmpDlg" aria-labelledby="cmpTitle">
     <div class="cmphd"><h2 id="cmpTitle">Comparar</h2><span class="lg" id="cmpInfo">PDF original à esquerda, Word convertido à direita. As duas colunas rolam juntas.</span><button type="button" class="btn ghost" id="cmpClose">Fechar</button></div>
@@ -15800,21 +15810,25 @@ if (typeof module !== 'undefined') module.exports = createPdf2Docx;
   function alertBox(slot, t) { var p = el('div', 'st err'); p.textContent = t; slot.appendChild(p); }
 
   /* ---------- COMPARAR DOIS PDFs ---------- */
-  var K = { a: null, b: null };
+  var K = { a: null, b: null, last: null };
   ['a', 'b'].forEach(function (s) { var d = $('drop_cmp_' + s), f = $('file_cmp_' + s); d.onclick = function () { f.click(); };
     d.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f.click(); } };
     f.onchange = function () { if (f.files[0]) setK(s, f.files[0]); f.value = ''; }; });
   function setK(s, f) { if (!H.isPdf(f)) return msg($('res_cmp'), 'Escolha arquivos PDF.', 'err'); K[s] = f; pick($('drop_cmp_' + s), f); $('go_cmp').disabled = !(K.a && K.b); }
   C.drops.cmp = $('cmpDrops'); C.adders.cmp = function (files) { var fs = Array.prototype.filter.call(files, H.isPdf); if (fs.length >= 2) { setK('a', fs[0]); setK('b', fs[1]); } else if (fs[0]) setK(!K.a ? 'a' : 'b', fs[0]); };
   var cv2 = document.createElement('canvas').getContext('2d');
-  async function words(d) { var out = []; for (var i = 1; i <= d.numPages; i++) { var pg = await d.getPage(i), v = pg.getViewport({ scale: 1 }), tc = await pg.getTextContent();
+  // palavras com posição, na ordem de leitura (linha por linha, da esquerda para a direita)
+  async function words(d) { var out = [];
+    for (var i = 1; i <= d.numPages; i++) { var pg = await d.getPage(i), v = pg.getViewport({ scale: 1 }), tc = await pg.getTextContent(), ws = [];
       tc.items.forEach(function (it) { if (!it.str || !it.str.trim()) return; var tr = pdfjsLib.Util.transform(v.transform, it.transform), fh = Math.hypot(tr[2], tr[3]) || 10, x0 = tr[4], y0 = tr[5], W = (it.width || 0) * (v.scale || 1);
         var s = it.str; cv2.font = '100px sans-serif'; var full = cv2.measureText(s).width || 1, re = /\S+/g, m;
         while ((m = re.exec(s))) { var a = cv2.measureText(s.slice(0, m.index)).width / full, b = cv2.measureText(s.slice(0, m.index + m[0].length)).width / full;
-          out.push({ t: m[0], p: i, x: x0 + a * W, w: Math.max(2, (b - a) * W), y: y0 - fh * 0.85, h: fh * 1.1 }); } }); pg.cleanup(); }
+          ws.push({ t: m[0], p: i, x: x0 + a * W, w: Math.max(2, (b - a) * W), y: y0 - fh * 0.85, h: fh * 1.1, base: y0, PW: v.width, PH: v.height }); } });
+      ws.sort(function (a, b) { return a.base - b.base || a.x - b.x; });
+      var lines = []; ws.forEach(function (w) { var L = lines[lines.length - 1]; if (L && Math.abs(w.base - L.base) < Math.max(2, w.h * 0.35)) L.ws.push(w); else lines.push({ base: w.base, ws: [w] }); });
+      lines.forEach(function (L) { L.ws.sort(function (a, b) { return a.x - b.x; }).forEach(function (w) { out.push(w); }); }); pg.cleanup(); }
     return out; }
-  function myers(A2, B2) { // diferença mínima entre duas listas de palavras (Myers); devolve operações
-    var N = A2.length, M = B2.length, MAX = N + M, V = new Int32Array(2 * MAX + 2), off = MAX + 1, trace = [];
+  function myers(A2, B2) { var N = A2.length, M = B2.length, MAX = N + M, V = new Int32Array(2 * MAX + 2), off = MAX + 1, trace = [];
     for (var D = 0; D <= MAX; D++) { trace.push(V.slice()); for (var k = -D; k <= D; k += 2) { var x = (k === -D || (k !== D && V[off + k - 1] < V[off + k + 1])) ? V[off + k + 1] : V[off + k - 1] + 1, y = x - k;
         while (x < N && y < M && A2[x] === B2[y]) { x++; y++; } V[off + k] = x; if (x >= N && y >= M) { trace.push(V.slice()); return back(trace, N, M, off); } }
       if (D > 4000) throw new Error('Os documentos são diferentes demais para comparar.'); } return []; }
@@ -15822,32 +15836,94 @@ if (typeof module !== 'undefined') module.exports = createPdf2Docx;
       var pk = (k === -D || (k !== D && V[off + k - 1] < V[off + k + 1])) ? k + 1 : k - 1, px2 = V[off + pk], py = px2 - pk;
       while (x > px2 && y > py) { ops.push(['=', x - 1, y - 1]); x--; y--; } if (D > 0) { if (x === px2) ops.push(['+', -1, y - 1]); else ops.push(['-', x - 1, -1]); } x = px2; y = py; }
     return ops.reverse(); }
-  $('go_cmp').onclick = async function () { var res = $('res_cmp'), view = $('view_cmp'), btn = this; btn.disabled = true; view.innerHTML = ''; msg(res, 'Lendo os dois PDFs…');
+  var norm = function (s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ''); };
+  function groupsOf(wa, wb) {
+    var ops = myers(wa.map(function (w) { return norm(w.t) || w.t; }), wb.map(function (w) { return norm(w.t) || w.t; })), gs = [], g = null, la = -1, lb = -1;
+    ops.forEach(function (o) { if (o[0] === '=') { g = null; la = o[1]; lb = o[2]; return; }
+      if (!g) { g = { a: [], b: [], ancA: la, ancB: lb }; gs.push(g); } if (o[0] === '-') g.a.push(wa[o[1]]); else g.b.push(wb[o[2]]); });
+    // trecho que só mudou de lugar (por exemplo o rodapé lido em outra ordem) não é diferença
+    var key = function (ws) { return ws.map(function (w) { return norm(w.t); }).join(''); }, moved = 0;
+    gs.forEach(function (x) { x.ka = key(x.a); x.kb = key(x.b); });
+    gs.forEach(function (x) { if (x.drop || !x.ka || x.kb) return; var y = gs.find(function (z) { return !z.drop && z !== x && !z.ka && z.kb === x.ka; }); if (y) { x.drop = y.drop = true; moved++; } });
+    gs.forEach(function (x) { if (x.drop || !x.ka || !x.kb || x.ka === x.kb) return; }); // troca só de pontuação ou maiúsculas some no norm
+    gs = gs.filter(function (x) { return !x.drop && (x.ka || x.kb) && x.ka !== x.kb; });
+    // várias mudanças na mesma linha viram um item só (ex.: número, SIF e data no título)
+    var lineOf = function (x) { var w = x.a[0] || x.b[0]; return w ? w.p + ':' + Math.round(w.base / Math.max(4, w.h * 0.6)) : ''; }, merged = [];
+    gs.forEach(function (x) { x.parts = [{ a: x.a, b: x.b }]; var pv = merged[merged.length - 1];
+      var same = pv && ((x.a[0] && pv.a.length && x.a[0].p === pv.a[pv.a.length - 1].p && Math.abs(x.a[0].base - pv.a[pv.a.length - 1].base) < Math.max(2, x.a[0].h * 0.4)) ||
+        (x.b[0] && pv.b.length && x.b[0].p === pv.b[pv.b.length - 1].p && Math.abs(x.b[0].base - pv.b[pv.b.length - 1].base) < Math.max(2, x.b[0].h * 0.4)));
+      if (same) { pv.a = pv.a.concat(x.a); pv.b = pv.b.concat(x.b); pv.parts.push({ a: x.a, b: x.b }); } else merged.push(x); });
+    gs = merged;
+    gs.forEach(function (x) { x.pa = x.a.length ? x.a[0].p : (wa[x.ancA] || wa[x.ancA + 1] || wa[0] || {}).p; x.pb = x.b.length ? x.b[0].p : (wb[x.ancB] || wb[x.ancB + 1] || wb[0] || {}).p; });
+    return { gs: gs, moved: moved }; }
+  var pageCache = {};
+  async function pageCanvas(d, tag, p, sc) { var k = tag + p; if (pageCache[k]) return pageCache[k]; var pg = await d.getPage(p), c = await S.renderCanvas(pg, sc); pg.cleanup(); pageCache[k] = c; return c; }
+  // recorte da página: a(s) linha(s) da mudança na largura toda, com a mudança marcada
+  async function strip(d, tag, ws, anc, color, sc) { var list = ws.length ? ws : anc ? [anc] : []; if (!list.length) return null;
+    var p = list[0].p, same = list.filter(function (w) { return w.p === p; }), y0 = Math.min.apply(null, same.map(function (w) { return w.y; })), y1 = Math.max.apply(null, same.map(function (w) { return w.y + w.h; }));
+    var PW = same[0].PW, PH = same[0].PH, pad = Math.max(10, (y1 - y0) * 0.6); y0 = Math.max(0, y0 - pad); y1 = Math.min(PH, y1 + pad); if (y1 - y0 > 220) y1 = y0 + 220;
+    // janela na largura da mudança com um pouco de contexto dos lados (a página inteira ficaria pequena demais para ler)
+    var mx0 = Math.min.apply(null, same.map(function (w) { return w.x; })), mx1 = Math.max.apply(null, same.map(function (w) { return w.x + w.w; })) + (ws.length ? 0 : 4), cw = Math.min(PW, Math.max(380, mx1 - mx0 + 220));
+    var x0 = Math.max(0, Math.min(PW - cw, (mx0 + mx1) / 2 - cw / 2));
+    var src = await pageCanvas(d, tag, p, sc), c = document.createElement('canvas'); c.width = Math.round(cw * sc); c.height = Math.round((y1 - y0) * sc);
+    var x = c.getContext('2d'); x.drawImage(src, Math.round(x0 * sc), Math.round(y0 * sc), c.width, c.height, 0, 0, c.width, c.height); x.translate(-x0 * sc, 0);
+    x.fillStyle = color[0]; x.strokeStyle = color[1]; x.lineWidth = 1.5;
+    if (ws.length) same.forEach(function (w) { x.fillRect((w.x - 1) * sc, (w.y - y0) * sc, (w.w + 2) * sc, w.h * sc); x.strokeRect((w.x - 1) * sc, (w.y - y0) * sc, (w.w + 2) * sc, w.h * sc); });
+    else { var a = list[0], ax = (a.x + a.w + 1) * sc, ay = (a.y - y0) * sc; x.fillStyle = color[1]; x.fillRect(ax, ay, 3, a.h * sc); } // nada aqui: marca onde estaria
+    return { c: c, p: p }; }
+  function excerpt(ws) { var s = ws.map(function (w) { return w.t; }).join(' '); return s.length > 160 ? s.slice(0, 160) + '…' : s; }
+  $('go_cmp').onclick = async function () { var res = $('res_cmp'), view = $('view_cmp'), btn = this; btn.disabled = true; view.innerHTML = ''; $('rep_cmp').hidden = true; pageCache = {}; msg(res, 'Lendo os dois PDFs…');
     var da = null, db = null;
     try { da = await S.pdfjsDoc(await bytesOf(K.a)); db = await S.pdfjsDoc(await bytesOf(K.b)); var wa = await words(da), wb = await words(db);
       if (!wa.length || !wb.length) throw new Error('Um dos PDFs não tem texto (é escaneado). Passe ele pelo OCR antes de comparar.');
       msg(res, 'Comparando…'); await new Promise(function (r) { setTimeout(r, 30); });
-      var ops = myers(wa.map(function (w) { return w.t; }), wb.map(function (w) { return w.t; })), del = {}, add = {}, groups = [], g = null;
-      ops.forEach(function (o) { if (o[0] === '=') { g = null; return; } if (!g) { g = { a: [], b: [] }; groups.push(g); } if (o[0] === '-') { del[o[1]] = 1; g.a.push(wa[o[1]]); } else { add[o[2]] = 1; g.b.push(wb[o[2]]); } });
-      if (!groups.length) { msg(res, 'Os dois PDFs têm exatamente o mesmo texto.', 'ok'); }
-      else { msg(res, groups.length + (groups.length > 1 ? ' diferenças encontradas.' : ' diferença encontrada.') + ' Em vermelho o que saiu do primeiro, em verde o que entrou no segundo.', 'warn');
-        var ul = el('ol', 'difflist'); groups.slice(0, 300).forEach(function (gg, n) { var li = el('li'), pg = (gg.a[0] || gg.b[0]).p, s1 = gg.a.map(function (w) { return w.t; }).join(' '), s2 = gg.b.map(function (w) { return w.t; }).join(' ');
-          li.innerHTML = '<span class="dp">Pág. ' + pg + '</span> '; if (s1) { var a1 = el('del'); a1.textContent = s1.length > 120 ? s1.slice(0, 120) + '…' : s1; li.appendChild(a1); } if (s1 && s2) li.appendChild(document.createTextNode(' → ')); if (s2) { var a2 = el('ins'); a2.textContent = s2.length > 120 ? s2.slice(0, 120) + '…' : s2; li.appendChild(a2); }
-          li.onclick = function () { var t = document.getElementById('cmpg_' + n) || document.getElementById('cmpp_' + pg); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' }); }; ul.appendChild(li); });
-        res.appendChild(ul); }
-      var np = Math.max(da.numPages, db.numPages), width = Math.min(560, Math.max(160, (view.clientWidth || 900) / 2 - 16)), dpr = Math.min(2, window.devicePixelRatio || 1), firstOf = {};
-      groups.forEach(function (gg, n) { (gg.a.concat(gg.b)).forEach(function (w) { var key = w.p + (gg.a.indexOf(w) >= 0 ? 'a' : 'b'); if (!(key in firstOf)) firstOf[key] = n; }); });
-      for (var p = 1; p <= np; p++) { var row = el('div', 'cmprow'); row.id = 'cmpp_' + p;
-        for (var side = 0; side < 2; side++) { var d = side ? db : da, cell = el('div', 'cmpcell'); var cap = el('div', 'cmpc'); cap.textContent = (side ? 'Segundo' : 'Primeiro') + ' · página ' + p; cell.appendChild(cap);
-          if (p <= d.numPages) { var pg2 = await d.getPage(p), v = pg2.getViewport({ scale: 1 }), sc = width / v.width, cv = await S.renderCanvas(pg2, sc * dpr), x = cv.getContext('2d');
-            x.save(); x.scale(sc * dpr, sc * dpr); var list = side ? wb : wa, mk = side ? add : del; x.fillStyle = side ? 'rgba(20,160,60,.35)' : 'rgba(220,30,30,.35)'; x.strokeStyle = side ? '#138a3a' : '#c81e1e'; x.lineWidth = 1 / (sc * dpr);
-            list.forEach(function (w, i) { if (w.p === p && mk[i]) { x.fillRect(w.x - 1, w.y, w.w + 2, w.h); x.strokeRect(w.x - 1, w.y, w.w + 2, w.h); } }); x.restore();
-            cv.style.width = width + 'px'; cell.appendChild(cv); pg2.cleanup(); } else { var e2 = el('div', 'cmpnone'); e2.textContent = 'Sem esta página'; cell.appendChild(e2); }
-          row.appendChild(cell); }
-        view.appendChild(row); }
-      groups.forEach(function (gg, n) { var p2 = (gg.a[0] || gg.b[0]).p, r2 = document.getElementById('cmpp_' + p2); if (r2 && !r2.querySelector('[id^=cmpg_]')) { var anchor = el('span'); anchor.id = 'cmpg_' + n; r2.prepend(anchor); } });
+      var R2 = groupsOf(wa, wb), gs = R2.gs, sc = 2.5;
+      if (!gs.length) { msg(res, 'Os dois PDFs têm o mesmo texto' + (da.numPages !== db.numPages ? ' (mas número de páginas diferente: ' + da.numPages + ' e ' + db.numPages + ')' : '') + '.' + (R2.moved ? ' Só há trechos que mudaram de lugar.' : ''), 'ok'); return; }
+      msg(res, gs.length + (gs.length > 1 ? ' diferenças' : ' diferença') + ' no texto.' + (R2.moved ? ' (' + R2.moved + ' trecho' + (R2.moved > 1 ? 's' : '') + ' que só mudou de lugar foi ignorado.)' : '') + (da.numPages !== db.numPages ? ' Páginas: ' + da.numPages + ' no primeiro e ' + db.numPages + ' no segundo.' : ''), 'warn');
+      var list = el('div', 'dcards'), cards = [];
+      for (var n = 0; n < gs.length && n < 200; n++) { var g = gs[n], card = el('div', 'dcard'), hd = el('div', 'dhd');
+        var kind = (g.a.length && g.b.length) || g.parts.length > 1 ? 'Alterado' : g.a.length ? 'Removido' : 'Incluído';
+        hd.innerHTML = '<span class="dn">' + (n + 1) + '</span><span class="dk dk-' + kind.charAt(0) + '">' + kind + '</span><span class="dpg">pág. ' + (g.pa === g.pb ? g.pa : g.pa + ' → ' + g.pb) + '</span>';
+        card.appendChild(hd); var tx = el('div', 'dtx');
+        g.parts.forEach(function (pt, k) { var ln = el('div', 'dln'); if (pt.a.length) { var d1 = el('del'); d1.textContent = excerpt(pt.a); ln.appendChild(d1); } if (pt.a.length && pt.b.length) ln.appendChild(document.createTextNode('  →  ')); if (pt.b.length) { var i1 = el('ins'); i1.textContent = excerpt(pt.b); ln.appendChild(i1); } tx.appendChild(ln); });
+        card.appendChild(tx);
+        var sa = await strip(da, 'a', g.a, wa[g.ancA] || wa[g.ancA + 1], ['rgba(220,30,30,.28)', '#c81e1e'], sc), sb = await strip(db, 'b', g.b, wb[g.ancB] || wb[g.ancB + 1], ['rgba(20,160,60,.28)', '#138a3a'], sc);
+        var im = el('div', 'dimg'); [[sa, 'Primeiro'], [sb, 'Segundo']].forEach(function (q) { if (!q[0]) return; var f = el('figure'), cap = el('figcaption'); cap.textContent = q[1] + ' · pág. ' + q[0].p; f.appendChild(cap); q[0].c.className = 'dcv'; f.appendChild(q[0].c); im.appendChild(f); });
+        card.appendChild(im); list.appendChild(card); cards.push({ g: g, kind: kind, sa: sa, sb: sb }); }
+      if (gs.length > 200) { var more = el('p', 'note'); more.textContent = 'Mostrando as primeiras 200 diferenças.'; list.appendChild(more); }
+      view.appendChild(list);
+      // páginas inteiras, recolhidas
+      var det = el('details', 'cmpfull'), sm = el('summary'); sm.textContent = 'Ver as páginas inteiras lado a lado'; det.appendChild(sm); view.appendChild(det);
+      det.addEventListener('toggle', async function once() { if (!det.open || det.dataset.done) return; det.dataset.done = 1; var np = Math.max(da2.numPages, db2.numPages), width = Math.min(520, Math.max(160, (view.clientWidth || 900) / 2 - 16)), dpr = Math.min(2, window.devicePixelRatio || 1);
+        for (var p = 1; p <= np; p++) { var row = el('div', 'cmprow'); for (var side = 0; side < 2; side++) { var d = side ? db2 : da2, cell = el('div', 'cmpcell'), cap = el('div', 'cmpc'); cap.textContent = (side ? 'Segundo' : 'Primeiro') + ' · página ' + p; cell.appendChild(cap);
+            if (p <= d.numPages) { var pg2 = await d.getPage(p), v = pg2.getViewport({ scale: 1 }), s2 = width / v.width, cv = await S.renderCanvas(pg2, s2 * dpr), x = cv.getContext('2d');
+              x.save(); x.scale(s2 * dpr, s2 * dpr); x.fillStyle = side ? 'rgba(20,160,60,.32)' : 'rgba(220,30,30,.32)';
+              gs.forEach(function (g) { (side ? g.b : g.a).forEach(function (w) { if (w.p === p) x.fillRect(w.x - 1, w.y, w.w + 2, w.h); }); }); x.restore(); cv.style.width = width + 'px'; cell.appendChild(cv); pg2.cleanup(); }
+            else { var e2 = el('div', 'cmpnone'); e2.textContent = 'Sem esta página'; cell.appendChild(e2); } row.appendChild(cell); } det.appendChild(row); } });
+      var da2 = da, db2 = db; da = db = null; // ficam abertos para "páginas inteiras" e relatório
+      if (K.last) try { K.last.da.destroy(); K.last.db.destroy(); } catch (e) {}
+      K.last = { da: da2, db: db2, cards: cards, na: K.a.name, nb: K.b.name, total: gs.length }; $('rep_cmp').hidden = false;
     } catch (e) { msg(res, H.errMsg(e), 'err'); }
     try { da && da.destroy(); db && db.destroy(); } catch (e) {} btn.disabled = false; };
+  // relatório em PDF: uma linha por diferença, com os dois recortes
+  $('rep_cmp').onclick = async function () { var L = K.last; if (!L) return; var btn = this; btn.disabled = true;
+    try { var doc = await P.PDFDocument.create(), font = await doc.embedFont(P.StandardFonts.Helvetica), bold = await doc.embedFont(P.StandardFonts.HelveticaBold), W = 595.28, Hh = 841.89, M = 36, page = null, y = 0;
+      var newPage = function () { page = doc.addPage([W, Hh]); y = Hh - M; };
+      var text = function (s, f, size, color, x, maxW) { s = winAnsi(s); var words2 = s.split(' '), line = '', lines = []; words2.forEach(function (w) { var t = line ? line + ' ' + w : w; if (f.widthOfTextAtSize(t, size) > maxW && line) { lines.push(line); line = w; } else line = t; }); if (line) lines.push(line);
+        lines.forEach(function (l) { if (y < M + size) newPage(); page.drawText(l, { x: x, y: y - size, size: size, font: f, color: color }); y -= size * 1.3; }); };
+      var jpg = async function (c) { return doc.embedJpg(await new Promise(function (ok) { c.toBlob(function (b) { b.arrayBuffer().then(function (a) { ok(new Uint8Array(a)); }); }, 'image/jpeg', 0.85); })); };
+      newPage(); text('Comparação de PDFs', bold, 16, P.rgb(0.1, 0.1, 0.1), M, W - 2 * M); y -= 4;
+      text('Primeiro: ' + L.na, font, 9.5, P.rgb(0.3, 0.3, 0.3), M, W - 2 * M); text('Segundo: ' + L.nb, font, 9.5, P.rgb(0.3, 0.3, 0.3), M, W - 2 * M);
+      text(L.total + (L.total > 1 ? ' diferenças' : ' diferença') + ' · gerado em ' + new Date().toLocaleString('pt-BR') + ' pela Ferramentas PDF', font, 9.5, P.rgb(0.3, 0.3, 0.3), M, W - 2 * M); y -= 8;
+      for (var i = 0; i < L.cards.length; i++) { var cd = L.cards[i], g = cd.g, imgs = [cd.sa, cd.sb].filter(Boolean), hImgs = imgs.reduce(function (s, q) { return s + q.c.height / q.c.width * (W - 2 * M) + 14; }, 0);
+        if (y - (40 + hImgs) < M) newPage(); page.drawLine({ start: { x: M, y: y }, end: { x: W - M, y: y }, thickness: 0.5, color: P.rgb(0.8, 0.8, 0.8) }); y -= 6;
+        text((i + 1) + '. ' + cd.kind + ' - pág. ' + (g.pa === g.pb ? g.pa : g.pa + ' > ' + g.pb), bold, 10.5, P.rgb(0.1, 0.1, 0.1), M, W - 2 * M);
+        g.parts.forEach(function (pt) { text((pt.a.length ? 'Antes: ' + excerpt(pt.a) : 'Antes: (nada)') + '   >   ' + (pt.b.length ? 'Depois: ' + excerpt(pt.b) : 'Depois: (removido)'), font, 9.5, P.rgb(0.2, 0.2, 0.2), M, W - 2 * M); }); y -= 3;
+        for (var k = 0; k < imgs.length; k++) { var q = imgs[k], im = await jpg(q.c), w = W - 2 * M, h = q.c.height / q.c.width * w; if (y - h - 12 < M) newPage();
+          page.drawText(winAnsi((q === cd.sa ? 'Primeiro' : 'Segundo') + ' - pág. ' + q.p), { x: M, y: y - 8, size: 7.5, font: font, color: P.rgb(0.45, 0.45, 0.45) }); y -= 11;
+          page.drawImage(im, { x: M, y: y - h, width: w, height: h }); page.drawRectangle({ x: M, y: y - h, width: w, height: h, borderColor: P.rgb(0.8, 0.8, 0.8), borderWidth: 0.5 }); y -= h + 6; } y -= 6; }
+      C.save('Comparação - ' + base(L.na) + ' x ' + base(L.nb) + '.pdf', await doc.save(), 'application/pdf');
+    } catch (e) { msg($('res_cmp'), H.errMsg(e), 'err'); } btn.disabled = false; };
 })();
 </script>
 <script>
